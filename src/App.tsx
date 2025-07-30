@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import CarModel from './components/CarModel';
+import CarControls from './components/CarControls';
 import './App.css';
 
 interface CarDetails {
@@ -9,7 +10,9 @@ interface CarDetails {
   model: string;
 }
 
-const App: React.FC = () => {
+function App() {
+  const [isCarLoaded, setIsCarLoaded] = useState(false);
+  const [carColor, setCarColor] = useState('#ff0000');
   const [carDetails, setCarDetails] = useState<CarDetails>({
     year: '',
     make: '',
@@ -23,6 +26,14 @@ const App: React.FC = () => {
     e.preventDefault();
     // Handle form submission (e.g., load specific car model)
     console.log('Car details submitted:', carDetails);
+  };
+
+  const handleLoadCar = () => {
+    setIsCarLoaded(true);
+  };
+
+  const handleColorChange = (color: string) => {
+    setCarColor(color);
   };
 
   const handlePartSelect = (partName: string) => {
@@ -74,29 +85,37 @@ const App: React.FC = () => {
           />
         </div>
 
+        <CarControls
+          onLoadCar={handleLoadCar}
+          onColorChange={handleColorChange}
+          isCarLoaded={isCarLoaded}
+        />
+
         {hoveredPart && (
-          <div className="tooltip">
-            Hovering over: {hoveredPart}
+          <div className="part-info">
+            Hovering: {hoveredPart}
           </div>
         )}
-
         {selectedPart && (
-          <div className="selected-part">
-            Selected part: {selectedPart}
+          <div className="part-info selected">
+            Selected: {selectedPart}
           </div>
         )}
       </div>
 
       <div className="car-viewer">
-        <Canvas>
-          <CarModel
-            onPartSelect={handlePartSelect}
-            onPartHover={handlePartHover}
-          />
+        <Canvas shadows camera={{ position: [5, 5, 5], fov: 50 }}>
+          {isCarLoaded && (
+            <CarModel
+              onPartSelect={handlePartSelect}
+              onPartHover={handlePartHover}
+              color={carColor}
+            />
+          )}
         </Canvas>
       </div>
     </div>
   );
-};
+}
 
 export default App;
