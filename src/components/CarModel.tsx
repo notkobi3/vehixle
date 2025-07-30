@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import type { Mesh } from 'three';
 import SelectablePart from './SelectablePart';
 
 interface CarModelProps {
@@ -9,14 +10,11 @@ interface CarModelProps {
 }
 
 const CarModel: React.FC<CarModelProps> = ({ onPartSelect, onPartHover }) => {
-  const bodyRef = React.useRef<THREE.Mesh>(null);
-  const wheelRefs = React.useRef<THREE.Mesh[]>([]);
+  const bodyRef = useRef<Mesh>(null);
 
   useFrame(() => {
-    if (wheelRefs.current) {
-      wheelRefs.current.forEach(wheel => {
-        if (wheel) wheel.rotation.x += 0.01;
-      });
+    if (bodyRef.current) {
+      bodyRef.current.rotation.y += 0.005;
     }
   });
 
@@ -27,7 +25,7 @@ const CarModel: React.FC<CarModelProps> = ({ onPartSelect, onPartHover }) => {
       <directionalLight position={[10, 10, 5]} intensity={1} />
       <gridHelper args={[20, 20]} />
 
-      {/* Car Body */}
+      {/* Car body */}
       <SelectablePart
         name="body"
         onSelect={onPartSelect}
@@ -40,16 +38,18 @@ const CarModel: React.FC<CarModelProps> = ({ onPartSelect, onPartHover }) => {
       </SelectablePart>
 
       {/* Wheels */}
-      {[[-1.5, 0, 1], [1.5, 0, 1], [-1.5, 0, -1], [1.5, 0, -1]].map((position, index) => (
+      {[
+        [-1.5, 0, 1],
+        [1.5, 0, 1],
+        [-1.5, 0, -1],
+        [1.5, 0, -1],
+      ].map((position, index) => (
         <SelectablePart
           key={`wheel-${index}`}
           name={`wheel-${index + 1}`}
           onSelect={onPartSelect}
           onHover={onPartHover}
-          position={position}
-          ref={(el: THREE.Mesh) => {
-            if (el) wheelRefs.current[index] = el;
-          }}
+          position={position as [number, number, number]}
         >
           <cylinderGeometry args={[0.5, 0.5, 0.3, 32]} rotation={[Math.PI / 2, 0, 0]} />
           <meshStandardMaterial color="black" />
