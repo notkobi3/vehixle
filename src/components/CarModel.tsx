@@ -1,7 +1,5 @@
 import React from 'react';
-import { useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import type { Mesh } from 'three';
 import SelectablePart from './SelectablePart';
 
 interface CarModelProps {
@@ -10,7 +8,6 @@ interface CarModelProps {
 }
 
 const CarModel: React.FC<CarModelProps> = ({ onPartSelect, onPartHover }) => {
-  // We don't actually need the bodyRef since we're not using it anymore
   return (
     <>
       <ambientLight intensity={0.5} />
