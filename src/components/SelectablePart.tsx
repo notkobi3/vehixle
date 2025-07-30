@@ -1,5 +1,4 @@
 import React from 'react';
-import type { ThreeElements } from '@react-three/fiber';
 import type { Mesh } from 'three';
 import { useRef } from 'react';
 
