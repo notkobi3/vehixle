@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import type { Mesh } from 'three';
@@ -10,17 +10,9 @@ interface CarModelProps {
 }
 
 const CarModel: React.FC<CarModelProps> = ({ onPartSelect, onPartHover }) => {
-  const bodyRef = useRef<Mesh>(null);
-
-  useFrame(() => {
-    if (bodyRef.current) {
-      bodyRef.current.rotation.y += 0.005;
-    }
-  });
-
+  // We don't actually need the bodyRef since we're not using it anymore
   return (
     <>
-      <OrbitControls />
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} />
       <gridHelper args={[20, 20]} />
@@ -30,10 +22,9 @@ const CarModel: React.FC<CarModelProps> = ({ onPartSelect, onPartHover }) => {
         name="body"
         onSelect={onPartSelect}
         onHover={onPartHover}
-        ref={bodyRef}
-        position={[0, 1, 0]}
+        position={[0, 0, 0]}
       >
-        <boxGeometry args={[4, 1.5, 2]} />
+        <boxGeometry args={[3, 1.5, 4]} />
         <meshStandardMaterial color="red" />
       </SelectablePart>
 
@@ -51,10 +42,14 @@ const CarModel: React.FC<CarModelProps> = ({ onPartSelect, onPartHover }) => {
           onHover={onPartHover}
           position={position as [number, number, number]}
         >
-          <cylinderGeometry args={[0.5, 0.5, 0.3, 32]} rotation={[Math.PI / 2, 0, 0]} />
-          <meshStandardMaterial color="black" />
+          <group rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.5, 0.5, 0.3, 32]} />
+            <meshStandardMaterial color="black" />
+          </group>
         </SelectablePart>
       ))}
+
+      <OrbitControls />
     </>
   );
 };
